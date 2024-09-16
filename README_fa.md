@@ -1,5 +1,4 @@
-# Standard Go Project Layout
-
+# طرح استاندارد پروژه Go
 Translations:
 
 * [한국어 문서](README_ko.md)
@@ -19,131 +18,201 @@ Translations:
 * [Indonesian](README_id.md)
 * [हिन्दी](README_hi.md)
 
-## Overview
 
-This is a basic layout for Go application projects. Note that it's basic in terms of content because it's focusing only on the general layout and not what you have inside. It's also basic because it's very high level and it doesn't go into great details in terms of how you can structure your project even further. For example, it doesn't try to cover the project structure you'd have with something like Clean Architecture.
+## بررسی اجمالی
 
-This is **`NOT an official standard defined by the core Go dev team`**. This is a set of common historical and emerging project layout patterns in the Go ecosystem. Some of these patterns are more popular than others. It also has a number of small enhancements along with several supporting directories common to any large enough real world application. Note that the **core Go team provides a great set of general guidelines about structuring Go projects** and what it means for your project when it's imported and when it's installed. See the [`Organizing a Go module`](https://go.dev/doc/modules/layout) page in the official Go docs for more details. It includes the `internal` and `cmd` directory patterns (described below) and other useful information.
+این یک طرح پایه برای پروژه‌های اپلیکیشن Go است. توجه داشته باشید که این طرح از نظر محتوا بسیار ساده است، زیرا فقط بر روی ساختار کلی تمرکز دارد و نه محتوای داخلی آن. همچنین به دلیل این که بسیار سطح بالا است و جزئیات دقیق‌تری از چگونگی ساختاردهی پروژه شما را پوشش نمی‌دهد، ساده محسوب می‌شود. به عنوان مثال، ساختار پروژه‌ای که دارای معماری Clean باشد را پوشش نمی‌دهد.
 
-**`If you are trying to learn Go or if you are building a PoC or a simple project for yourself this project layout is an overkill. Start with something really simple instead (a single `main.go` file and `go.mod` is more than enough).`** As your project grows keep in mind that it'll be important to make sure your code is well structured otherwise you'll end up with a messy code with lots of hidden dependencies and global state. When you have more people working on the project you'll need even more structure. That's when it's important to introduce a common way to manage packages/libraries. When you have an open source project or when you know other projects import the code from your project repository that's when it's important to have private (aka `internal`) packages and code. Clone the repository, keep what you need and delete everything else! Just because it's there it doesn't mean you have to use it all. None of these patterns are used in every single project. Even the `vendor` pattern is not universal.
+این **`یک استاندارد رسمی که توسط تیم توسعه اصلی Go تعریف شده باشد، نیست`**. این مجموعه‌ای از الگوهای معمول تاریخی و نوظهور در اکوسیستم Go است. برخی از این الگوها نسبت به بقیه محبوب‌تر هستند. همچنین چندین بهبود کوچک به همراه چندین دایرکتوری پشتیبانی که در هر اپلیکیشن واقعی به اندازه کافی بزرگ کاربرد دارند، اضافه شده است. توجه داشته باشید که **تیم اصلی Go مجموعه‌ای عالی از راهنماهای کلی درباره ساختاردهی پروژه‌های Go و معنای آن برای پروژه شما هنگامی که وارد شده و نصب می‌شود، ارائه می‌دهد**. به صفحه [`سازمان‌دهی یک ماژول Go`](https://go.dev/doc/modules/layout) در مستندات رسمی Go برای جزئیات بیشتر مراجعه کنید. این صفحه شامل الگوهای دایرکتوری `internal` و `cmd` (که در زیر توضیح داده شده‌اند) و اطلاعات مفید دیگری است.
 
-With Go 1.14 [`Go Modules`](https://go.dev/wiki/Modules) are finally ready for production. Use [`Go Modules`](https://blog.golang.org/using-go-modules) unless you have a specific reason not to use them and if you do then you don’t need to worry about $GOPATH and where you put your project. The basic `go.mod` file in the repo assumes your project is hosted on GitHub, but it's not a requirement. The module path can be anything though the first module path component should have a dot in its name (the current version of Go doesn't enforce it anymore, but if you are using slightly older versions don't be surprised if your builds fail without it). See Issues [`37554`](https://github.com/golang/go/issues/37554) and [`32819`](https://github.com/golang/go/issues/32819) if you want to know more about it.
+**`اگر سعی دارید Go یاد بگیرید یا یک PoC یا پروژه ساده برای خود بسازید، این طرح پروژه اضافی است. با چیزی بسیار ساده‌تر شروع کنید (یک فایل ساده `main.go` و `go.mod` کافی است).`** با رشد پروژه خود به یاد داشته باشید که ساختار کد شما بسیار مهم است، وگرنه به کدی آشفته با وابستگی‌های پنهان و وضعیت جهانی زیادی خواهید رسید. هنگامی که افراد بیشتری روی پروژه کار کنند، شما به ساختار بیشتری نیاز خواهید داشت. در این مواقع اهمیت دارد که روش مشترکی برای مدیریت بسته‌ها/کتابخانه‌ها معرفی کنید. هنگامی که پروژه‌ای متن‌باز دارید یا زمانی که می‌دانید پروژه‌های دیگر کد شما را وارد می‌کنند، در این مواقع اهمیت دارد که بسته‌های خصوصی (معروف به `internal`) داشته باشید. ریپازیتوری را کلون کنید، آنچه نیاز دارید نگه دارید و بقیه را حذف کنید! فقط به این دلیل که وجود دارد، به این معنا نیست که شما باید از همه چیز استفاده کنید. هیچ یک از این الگوها در هر پروژه‌ای استفاده نمی‌شوند. حتی الگوی `vendor` نیز جهانی نیست.
 
-This project layout is intentionally generic and it doesn't try to impose a specific Go package structure.
+با Go 1.14، [`Go Modules`](https://go.dev/wiki/Modules) در نهایت برای تولید آماده شدند. از [`Go Modules`](https://blog.golang.org/using-go-modules) استفاده کنید، مگر اینکه دلیل خاصی برای عدم استفاده از آنها داشته باشید و در این صورت نیازی نیست نگران $GOPATH و محل قرارگیری پروژه خود باشید. فایل `go.mod` پایه در ریپو فرض می‌کند که پروژه شما در GitHub میزبانی می‌شود، اما این یک الزام نیست. مسیر ماژول می‌تواند هر چیزی باشد، اگرچه اولین مولفه مسیر ماژول باید یک نقطه در نام خود داشته باشد (نسخه فعلی Go دیگر آن را اجرا نمی‌کند، اما اگر از نسخه‌های کمی قدیمی‌تر استفاده می‌کنید، تعجب نکنید اگر ساخت‌هایتان بدون آن شکست بخورند). به مسائل [`37554`](https://github.com/golang/go/issues/37554) و [`32819`](https://github.com/golang/go/issues/32819) مراجعه کنید اگر می‌خواهید بیشتر در مورد آن بدانید.
 
-This is a community effort. Open an issue if you see a new pattern or if you think one of the existing patterns needs to be updated.
+این طرح پروژه به عمد عمومی است و سعی نمی‌کند ساختار بسته Go خاصی را تحمیل کند.
 
-If you need help with naming, formatting and style start by running [`gofmt`](https://golang.org/cmd/gofmt/) and [`staticcheck`](https://github.com/dominikh/go-tools/tree/master/cmd/staticcheck). The previous standard linter, golint, is now deprecated and not maintained; use of a maintained linter such as staticcheck is recommended. Also make sure to read these Go code style guidelines and recommendations:
+این یک تلاش جامعه‌محور است. اگر الگویی جدید می‌بینید یا فکر می‌کنید یکی از الگوهای موجود نیاز به به‌روزرسانی دارد، یک مسئله باز کنید.
+
+اگر نیاز به کمک در نام‌گذاری، فرمت و استایل دارید، با اجرای [`gofmt`](https://golang.org/cmd/gofmt/) و [`staticcheck`](https://github.com/dominikh/go-tools/tree/master/cmd/staticcheck) شروع کنید. لینتر استاندارد قبلی، golint، اکنون منسوخ شده و نگهداری نمی‌شود؛ استفاده از یک لینتر نگهداری‌شده مانند staticcheck توصیه می‌شود. همچنین مطمئن شوید که این دستورالعمل‌ها و توصیه‌های استایل کد Go را خوانده‌اید:
 * https://talks.golang.org/2014/names.slide
 * https://golang.org/doc/effective_go.html#names
 * https://blog.golang.org/package-names
 * https://go.dev/wiki/CodeReviewComments
-* [Style guideline for Go packages](https://rakyll.org/style-packages) (rakyll/JBD)
+* [راهنمای سبک برای بسته‌های Go](https://rakyll.org/style-packages) (rakyll/JBD)
 
-See [`Go Project Layout`](https://medium.com/golang-learn/go-project-layout-e5213cdcfaa2) for additional background information.
-
-More about naming and organizing packages as well as other code structure recommendations:
+برای اطلاعات بیشتر در مورد نام‌گذاری و سازمان‌دهی بسته‌ها و همچنین توصیه‌های ساختار کد:
 * [GopherCon EU 2018: Peter Bourgon - Best Practices for Industrial Programming](https://www.youtube.com/watch?v=PTE4VJIdHPg)
-* [GopherCon Russia 2018: Ashley McNamara + Brian Ketelsen - Go best practices.](https://www.youtube.com/watch?v=MzTcsI6tn-0)
-* [GopherCon 2017: Edward Muller - Go Anti-Patterns](https://www.youtube.com/watch?v=ltqV6pDKZD8)
-* [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0)
+* [GopherCon Russia 2018: Ashley McNamara + Brian Ketelsen - بهترین شیوه‌ها در Go.](https://www.youtube.com/watch?v=MzTcsI6tn-0)
+* [GopherCon 2017: Edward Muller - الگوهای ضد Go](https://www.youtube.com/watch?v=ltqV6pDKZD8)
+* [GopherCon 2018: Kat Zien - چگونه اپلیکیشن‌های Go خود را ساختاردهی می‌کنید](https://www.youtube.com/watch?v=oL6JBUk6tj0)
 
-A Chinese post about Package-Oriented-Design guidelines and Architecture layer
-* [面向包的设计和架构分层](https://github.com/danceyoung/paper-code/blob/master/package-oriented-design/packageorienteddesign.md)
+یک پست چینی درباره راهنمای طراحی Package-Oriented و لایه‌بندی معماری
+* [طراحی و معماری لایه‌بندی شده بر اساس بسته‌ها](https://github.com/danceyoung/paper-code/blob/master/package-oriented-design/packageorienteddesign.md)
 
-## Go Directories
+## دایرکتوری‌های Go
 
-### `/cmd`
+### /cmd
 
-Main applications for this project.
+برنامه‌های اصلی برای این پروژه.
 
-The directory name for each application should match the name of the executable you want to have (e.g., `/cmd/myapp`).
+نام دایرکتوری هر برنامه باید با نام اجرایی که می‌خواهید داشته باشید مطابقت داشته باشد (مثلاً /cmd/myapp).
 
-Don't put a lot of code in the application directory. If you think the code can be imported and used in other projects, then it should live in the `/pkg` directory. If the code is not reusable or if you don't want others to reuse it, put that code in the `/internal` directory. You'll be surprised what others will do, so be explicit about your intentions!
+کد زیادی را در دایرکتوری برنامه قرار ندهید. اگر فکر می‌کنید کد می‌تواند وارد شود و در پروژه‌های دیگر استفاده شود، باید در دایرکتوری /pkg قرار بگیرد. اگر کد قابل استفاده مجدد نیست یا نمی‌خواهید دیگران از آن استفاده کنند، آن را در دایرکتوری /internal قرار دهید. از کارهایی که دیگران انجام می‌دهند شگفت‌زده خواهید شد، بنابراین در مورد نیت‌های خود صریح باشید!
 
-It's common to have a small `main` function that imports and invokes the code from the `/internal` and `/pkg` directories and nothing else.
+رایج است که یک تابع اصلی کوچک وجود داشته باشد که کد را از دایرکتوری‌های /internal و /pkg وارد کند و آن را فراخوانی کند و بس.
 
-See the [`/cmd`](cmd/README.md) directory for examples.
+برای مثال‌ها به دایرکتوری [/cmd](cmd/README.md) مراجعه کنید.
 
-### `/internal`
+### /internal
 
-Private application and library code. This is the code you don't want others importing in their applications or libraries. Note that this layout pattern is enforced by the Go compiler itself. See the Go 1.4 [`release notes`](https://golang.org/doc/go1.4#internalpackages) for more details. Note that you are not limited to the top level `internal` directory. You can have more than one `internal` directory at any level of your project tree.
+کد خصوصی برنامه و کتابخانه. این همان کدی است که نمی‌خواهید دیگران در برنامه‌ها یا کتابخانه‌های خود وارد کنند. توجه داشته باشید که این الگوی چیدمان توسط خود کامپایلر Go اعمال می‌شود. برای جزئیات بیشتر به [یادداشت‌های انتشار Go 1.4](https://golang.org/doc/go1.4#internalpackages) مراجعه کنید. توجه داشته باشید که شما محدود به دایرکتوری سطح بالای internal نیستید. می‌توانید بیش از یک دایرکتوری internal در هر سطحی از درخت پروژه خود داشته باشید.
 
-You can optionally add a bit of extra structure to your internal packages to separate your shared and non-shared internal code. It's not required (especially for smaller projects), but it's nice to have visual clues showing the intended package use. Your actual application code can go in the `/internal/app` directory (e.g., `/internal/app/myapp`) and the code shared by those apps in the `/internal/pkg` directory (e.g., `/internal/pkg/myprivlib`).
+می‌توانید ساختار اضافی کمی را به بسته‌های داخلی خود اضافه کنید تا کدهای مشترک و غیر مشترک داخلی خود را جدا کنید. این ضروری نیست (به خصوص برای پروژه‌های کوچکتر)، اما دیدن سرنخ‌های بصری که استفاده مورد نظر از بسته را نشان می‌دهند خوب است. کد واقعی برنامه شما می‌تواند در دایرکتوری /internal/app قرار بگیرد (مثلاً /internal/app/myapp) و کدی که توسط آن برنامه‌ها به اشتراک گذاشته شده است در دایرکتوری /internal/pkg قرار بگیرد (مثلاً /internal/pkg/myprivlib).
 
-You use internal directories to make packages private. If you put a package inside an internal directory, then other packages can’t import it unless they share a common ancestor. And it’s the only directory named in Go’s documentation and has special compiler treatment.
+دایرکتوری‌های internal برای خصوصی‌سازی بسته‌ها استفاده می‌شوند. اگر یک بسته را در یک دایرکتوری internal قرار دهید، دیگر بسته‌ها نمی‌توانند آن را وارد کنند مگر اینکه جد مشترکی داشته باشند. و این تنها دایرکتوری است که در مستندات Go نام برده شده و توسط کامپایلر به طور خاص پردازش می‌شود.
 
-### `/pkg`
+### /pkg
 
-Library code that's ok to use by external applications (e.g., `/pkg/mypubliclib`). Other projects will import these libraries expecting them to work, so think twice before you put something here :-) Note that the `internal` directory is a better way to ensure your private packages are not importable because it's enforced by Go. The `/pkg` directory is still a good way to explicitly communicate that the code in that directory is safe for use by others. The [`I'll take pkg over internal`](https://travisjeffery.com/b/2019/11/i-ll-take-pkg-over-internal/) blog post by Travis Jeffery provides a good overview of the `pkg` and `internal` directories and when it might make sense to use them.
+کد کتابخانه‌ای که استفاده از آن توسط برنامه‌های خارجی مجاز است (مثلاً /pkg/mypubliclib). پروژه‌های دیگر این کتابخانه‌ها را وارد می‌کنند و انتظار دارند که کار کنند، بنابراین قبل از اینکه چیزی را اینجا قرار دهید دو بار فکر کنید :-) توجه داشته باشید که دایرکتوری internal راه بهتری برای اطمینان از غیر قابل وارد کردن بودن بسته‌های خصوصی شما است، زیرا توسط Go اعمال می‌شود. دایرکتوری /pkg هنوز هم یک راه خوب برای صریح اعلام کردن این است که کد در این دایرکتوری برای استفاده دیگران ایمن است. پست وبلاگ [I'll take pkg over internal](https://travisjeffery.com/b/2019/11/i-ll-take-pkg-over-internal/) نوشته تراویس جفری یک مرور خوب از دایرکتوری‌های pkg و internal و زمان استفاده از آنها ارائه می‌دهد.
 
-It's also a way to group Go code in one place when your root directory contains lots of non-Go components and directories making it easier to run various Go tools (as mentioned in these talks: [`Best Practices for Industrial Programming`](https://www.youtube.com/watch?v=PTE4VJIdHPg) from GopherCon EU 2018, [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0) and [GoLab 2018 - Massimiliano Pippi - Project layout patterns in Go](https://www.youtube.com/watch?v=3gQa1LWwuzk)).
+همچنین یک راه برای گروه‌بندی کد Go در یک مکان است زمانی که دایرکتوری ریشه شما شامل تعداد زیادی از اجزا و دایرکتوری‌های غیر Go است، و این باعث می‌شود که اجرای ابزارهای مختلف Go آسان‌تر شود (همانطور که در این گفتگوها ذکر شده است: [Best Practices for Industrial Programming](https://www.youtube.com/watch?v=PTE4VJIdHPg) از GopherCon EU 2018، [GopherCon 2018: Kat Zien - How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0) و [GoLab 2018 - Massimiliano Pippi - Project layout patterns in Go](https://www.youtube.com/watch?v=3gQa1LWwuzk)).
 
-See the [`/pkg`](pkg/README.md) directory if you want to see which popular Go repos use this project layout pattern. This is a common layout pattern, but it's not universally accepted and some in the Go community don't recommend it.
+برای دیدن اینکه کدام مخازن Go محبوب از این الگوی چیدمان پروژه استفاده می‌کنند، به دایرکتوری [/pkg](pkg/README.md) مراجعه کنید. این یک الگوی چیدمان رایج است، اما به طور جهانی پذیرفته نشده و برخی از اعضای جامعه Go آن را توصیه نمی‌کنند.
 
-It's ok not to use it if your app project is really small and where an extra level of nesting doesn't add much value (unless you really want to :-)). Think about it when it's getting big enough and your root directory gets pretty busy (especially if you have a lot of non-Go app components).
+اگر پروژه برنامه شما واقعاً کوچک است و جایی که یک سطح اضافی از لانه‌گذاری ارزش زیادی اضافه نمی‌کند، استفاده نکردن از آن خوب است (مگر اینکه واقعاً بخواهید :-)). به آن فکر کنید وقتی پروژه شما به اندازه‌ای بزرگ شد که دایرکتوری ریشه شما شلوغ شود (به ویژه اگر تعداد زیادی از اجزای برنامه غیر Go داشته باشید).
 
-The `pkg` directory origins: The old Go source code used to use `pkg` for its packages and then various Go projects in the community started copying the pattern (see [`this`](https://twitter.com/bradfitz/status/1039512487538970624) Brad Fitzpatrick's tweet for more context).
+منشأ دایرکتوری pkg: کد منبع قدیمی Go قبلاً از pkg برای بسته‌های خود استفاده می‌کرد و سپس پروژه‌های مختلف Go در جامعه شروع به کپی کردن این الگو کردند (برای دیدن زمینه بیشتر، به [این](https://twitter.com/bradfitz/status/1039512487538970624) توییت برد فیتزپاتریک مراجعه کنید).
 
-### `/vendor`
+### /vendor
 
-Application dependencies (managed manually or by your favorite dependency management tool like the new built-in [`Go Modules`](https://go.dev/wiki/Modules) feature). The `go mod vendor` command will create the `/vendor` directory for you. Note that you might need to add the `-mod=vendor` flag to your `go build` command if you are not using Go 1.14 where it's on by default.
+وابستگی‌های برنامه (به صورت دستی یا با استفاده از ابزار مدیریت وابستگی مورد علاقه شما مانند ویژگی جدید [Go Modules](https://go.dev/wiki/Modules) داخلی). دستور go mod vendor دایرکتوری /vendor را برای شما ایجاد خواهد کرد. توجه داشته باشید که ممکن است نیاز باشد که پرچم -mod=vendor را به دستور go build خود اضافه کنید اگر از Go 1.14 استفاده نمی‌کنید که به صورت پیش‌فرض فعال است.
 
-Don't commit your application dependencies if you are building a library.
+اگر در حال ساخت یک کتابخانه هستید، وابستگی‌های برنامه خود را به مخزن ندهید.
 
-Note that since [`1.13`](https://golang.org/doc/go1.13#modules) Go also enabled the module proxy feature (using [`https://proxy.golang.org`](https://proxy.golang.org) as their module proxy server by default). Read more about it [`here`](https://blog.golang.org/module-mirror-launch) to see if it fits all of your requirements and constraints. If it does, then you won't need the `vendor` directory at all.
+توجه داشته باشید که از [1.13](https://golang.org/doc/go1.13#modules) Go همچنین ویژگی پروکسی ماژول را فعال کرده است (استفاده از [https://proxy.golang.org](https://proxy.golang.org) به عنوان سرور پروکسی ماژول خود به صورت پیش‌فرض). برای اطلاعات بیشتر درباره آن [اینجا](https://blog.golang.org/module-mirror-launch) را بخوانید تا ببینید آیا با تمام نیازها و محدودیت‌های شما مطابقت دارد یا خیر. اگر اینطور باشد، دیگر به دایرکتوری vendor نیازی نخواهید داشت.
 
-## Service Application Directories
+## دایرکتوری‌های برنامه سرویس
 
-### `/api`
+### /api
 
-OpenAPI/Swagger specs, JSON schema files, protocol definition files.
+مشخصات OpenAPI/Swagger، فایل‌های طرح‌واره JSON، فایل‌های تعریف پروتکل.
 
-See the [`/api`](api/README.md) directory for examples.
+برای مثال‌ها به دایرکتوری [/api](api/README.md) مراجعه کنید.
 
-## Web Application Directories
+## دایرکتوری‌های برنامه وب
 
-### `/web`
+### /web
 
-Web application specific components: static web assets, server side templates and SPAs.
+اجزای خاص برنامه وب: دارایی‌های وب استاتیک، الگوهای سمت سرور و SPAs.
 
-## Common Application Directories
+## دایرکتوری‌های رایج برنامه
 
-### `/configs`
+### /configs
 
-Configuration file templates or default configs.
+قالب‌های فایل پیکربندی یا پیکربندی‌های پیش‌فرض.
 
-Put your `confd` or `consul-template` template files here.
+فایل‌های قالب confd یا consul-template خود را اینجا قرار دهید.
 
-### `/init`
+### /init
 
-System init (systemd, upstart, sysv) and process manager/supervisor (runit, supervisord) configs.
+پیکربندی‌های init سیستم (systemd، upstart، sysv) و مدیر فرایند/ناظر (runit، supervisord).
 
-### `/scripts`
+### /scripts
 
-Scripts to perform various build, install, analysis, etc operations.
+اسکریپت‌ها برای انجام عملیات‌های مختلف ساخت، نصب، تحلیل و غیره.
 
-These scripts keep the root level Makefile small and simple (e.g., [`https://github.com/hashicorp/terraform/blob/main/Makefile`](https://github.com/hashicorp/terraform/blob/main/Makefile)).
+این اسکریپت‌ها فایل Makefile سطح ریشه را کوچک و ساده نگه می‌دارند (مثلاً [https://github.com/hashicorp/terraform/blob/main/Makefile](https://github.com/hashicorp/terraform/blob/main/Makefile)).
 
-See the [`/scripts`](scripts/README.md) directory for examples.
+برای مثال‌ها به دایرکتوری [/scripts](scripts/README.md) مراجعه کنید.
 
-### `/build`
+### /build
 
-Packaging and Continuous Integration.
+بسته‌بندی و یکپارچه‌سازی مداوم.
 
-Put your cloud (AMI), container (Docker), OS (deb, rpm, pkg) package configurations and scripts in the `/build/package` directory.
+پیکربندی‌ها و اسکریپت‌های بسته‌بندی ابر (AMI)، کانتینر (Docker)، سیستم‌عامل (deb، rpm، pkg) را در دایرکتوری /build/package قرار دهید.
 
-Put your CI (travis, circle, drone) configurations and scripts in the `/build/ci` directory. Note that some of the CI tools (e.g., Travis CI) are very picky about the location of their config files. Try putting the config files in the `/build/ci` directory linking them to the location where the CI tools expect them (when possible).
+پیکربندی‌ها و اسکریپت‌های CI (travis، circle، drone) را در دایرکتوری /build/ci قرار دهید. توجه داشته باشید که برخی از ابزارهای CI (مانند Travis CI) بسیار حساس به مکان فایل‌های پیکربندی خود هستند. سعی کنید فایل‌های پیکربندی را در دایرکتوری /build/ci قرار دهید و آنها را به مکانی که ابزارهای CI انتظار دارند پیوند دهید (در صورت امکان).
 
-### `/deployments`
+### /deployments
 
-IaaS, PaaS, system and container orchestration deployment configurations and templates (docker-compose, kubernetes/helm, terraform). Note that in some repos (especially apps deployed with kubernetes) this directory is called `/deploy`.
+پیکربندی‌ها و الگوهای استقرار IaaS، PaaS، سیستم و ارکستراسیون کانتینر (docker-compose، kubernetes/helm، terraform). توجه داشته باشید که در برخی مخازن (به ویژه برنامه‌هایی که با kubernetes مستقر می‌شوند) این دایرکتوری /deploy نامیده می‌شود.
+
+### /test
+
+برنامه‌های آزمایشی خارجی اضافی و داده‌های آزمایشی. به هر نحوی که می‌خواهید دایرکتوری /test را ساختاردهی کنید. برای داده‌های آزمایشی اضافی، توصیه می‌شود از دایرکتوری `/test/testdata` یا `/test/data` مطابق با نیازهای Go استفاده کنید.
+
+این جای خوبی برای تست‌های سطح یکپارچه‌سازی و end-to-end برای ذخیره شدن همراه با ابزارهای اضافی برای تسهیل آزمایش است.
+
+
 
 ### `/test`
 
 Additional external test apps and test data. Feel free to structure the `/test` directory anyway you want. For bigger projects it makes sense to have a data subdirectory. For example, you can have `/test/data` or `/test/testdata` if you need Go to ignore what's in that directory. Note that Go will also ignore directories or files that begin with "." or "_", so you have more flexibility in terms of how you name your test data directory.
 
 See the [`/test`](test/README.md) directory for examples.
+
+
+برای مثال‌ها به دایرکتوری [/test](test/README.md) مراجعه کنید.
+
+## دایرکتوری‌های موقتی
+
+### /tmp
+
+فایل‌های موقت را اینجا قرار دهید. این معمولاً به صورت دستی در طول اجرای برنامه توسط شما ایجاد می‌شود و نباید برای مدت طولانی وجود داشته باشد (مثلاً فایل‌های کش یا فایل‌های خروجی موقت که توسط عملیات خاصی تولید می‌شوند).
+
+## سایر دایرکتوری‌های رایج
+
+### /docs
+
+مستندات طراحی و پیاده‌سازی. توجه داشته باشید که گوگل در زمان استفاده از [مدل طراحی Monorepo](https://github.com/google/mono_repo) از این مدل به عنوان یک الگوی ثابت استفاده می‌کند. همچنین توجه داشته باشید که پروژه‌های بزرگ Go به جای /docs، از دایرکتوری‌های دیگر مانند /doc استفاده می‌کنند.
+
+برای مثال‌ها به دایرکتوری [/docs](docs/README.md) مراجعه کنید.
+
+### /tools
+
+ابزارها و اسکریپت‌های مربوط به این پروژه، اما از کد منبع اصلی جدا هستند (به عنوان مثال کد سازنده‌هایی که برای تولید کد استفاده می‌شوند و در کد منبع نهایی پروژه نیازی نیست).
+
+### /examples
+
+نمونه‌های استفاده شده از پروژه شما. بهتر است این دایرکتوری را به عنوان بخشی از پروژه خود نگه دارید.
+
+برای مثال‌ها به دایرکتوری [/examples](examples/README.md) مراجعه کنید.
+
+### /third_party
+
+کتابخانه‌ها و ابزارهای وابسته‌ای که توسط شخص ثالث ارائه شده‌اند و پروژه شما به آنها وابسته است. همچنین ممکن است برای ابزارهای اضافی که توسط دیگران ساخته شده‌اند و مورد نیاز هستند، مورد استفاده قرار گیرد. در پروژه‌های مدرن، به دلیل استفاده از مدیریت وابستگی‌های ماژولی Go، کمتر دیده می‌شود.
+
+### /githooks
+
+اسکریپت‌های Git Hook. می‌توانید اسکریپت‌های Hook Git خود را در اینجا قرار دهید. این معمولاً شامل مواردی مانند pre-commit یا pre-push است که به صورت خودکار اجرا می‌شوند.
+
+### /assets
+
+فایل‌های استاتیک و تصاویر مانند لوگوها و آیکون‌ها.
+
+### /website
+
+اگر پروژه شما شامل مستندات یا وب‌سایت محصول است، می‌توانید فایل‌های وب‌سایت خود را اینجا ذخیره کنید.
+
+## دایرکتوری‌های غیراستاندارد
+
+بعضی از دایرکتوری‌ها در پروژه‌های خاص ایجاد می‌شوند که استاندارد نیستند اما ممکن است در موارد خاص مفید باشند:
+
+### /integrations
+
+فایل‌های مرتبط با یکپارچه‌سازی با سیستم‌ها و سرویس‌های دیگر (مثلاً ادغام با APIهای شخص ثالث).
+
+### /tasks
+
+وظایف خودکار، مانند ساخت و استقرار خودکار برنامه.
+
+### /sandbox
+
+محیط‌های آزمایشی و توسعه برای ایده‌های جدید یا آزمایش ویژگی‌های جدید پروژه.
+
+### /playbooks
+
+مستندات و دستورالعمل‌هایی برای اجرای عملیات خاص مانند استقرار، تعمیر و نگهداری و مدیریت سیستم.
 
 ## Other Directories
 
